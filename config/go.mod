@@ -1,4 +1,4 @@
-module github.com/alexferl/x/config
+module github.com/alexferl/x/config/v2
 
 go 1.16
 
