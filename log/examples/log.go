@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	xlog "github.com/alexferl/x/log"
+	xlog "github.com/alexferl/x/log/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 )

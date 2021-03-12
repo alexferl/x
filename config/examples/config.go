@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	xconfig "github.com/alexferl/x/config"
+	xconfig "github.com/alexferl/x/config/v2"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
