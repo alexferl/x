@@ -17,8 +17,8 @@ var (
 	}
 )
 
-// AddFlags adds all the flags from the command line
-func (c *Config) AddFlags(fs *pflag.FlagSet) {
+// BindFlags adds all the flags from the command line
+func (c *Config) BindFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&c.LogOutput, "log-output", c.LogOutput, "The output to write to. "+
 		"'stdout' means log to stdout, 'stderr' means log to stderr.")
 	fs.StringVar(&c.LogWriter, "log-writer", c.LogWriter,

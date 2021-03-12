@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	xlog "github.com/alexferl/x/log"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -15,7 +14,6 @@ type Config struct {
 	AppName      string
 	EnvName      string
 	EnvVarPrefix string
-	Logging      *xlog.Config
 }
 
 var (
@@ -23,7 +21,6 @@ var (
 		AppName:      "app",
 		EnvName:      "dev",
 		EnvVarPrefix: "app",
-		Logging:      xlog.DefaultConfig,
 	}
 )
 
@@ -32,8 +29,8 @@ func New() *Config {
 	return DefaultConfig
 }
 
-// addFlags adds all the flags from the command line
-func (c *Config) addFlags(fs *pflag.FlagSet) {
+// bindFlags adds all the flags from the command line
+func (c *Config) bindFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&c.AppName, "app-name", c.AppName, "The name of the application.")
 	fs.StringVar(&c.EnvName, "env-name", c.EnvName, "The environment of the application. "+
 		"Used to load the right configs file.")
@@ -50,10 +47,12 @@ func wordSepNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
 }
 
 // BindFlags normalizes and parses the command line flags
-func (c *Config) BindFlags() {
-	c.Logging.AddFlags(pflag.CommandLine)
+func (c *Config) BindFlags(flagSets ...func(fs *pflag.FlagSet)) {
+	for _, flagSet := range flagSets {
+		flagSet(pflag.CommandLine)
+	}
 
-	c.addFlags(pflag.CommandLine)
+	c.bindFlags(pflag.CommandLine)
 	err := viper.BindPFlags(pflag.CommandLine)
 	if err != nil {
 		log.Panic().Msgf("Error binding flags: '%v'", err)

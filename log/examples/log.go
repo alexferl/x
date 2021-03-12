@@ -11,7 +11,7 @@ import (
 func main() {
 	c := xlog.DefaultConfig // use default settings
 	// c := &xlog.Config{LogWriter: "json"} // use custom settings
-	c.AddFlags(pflag.CommandLine)
+	c.BindFlags(pflag.CommandLine)
 	pflag.Parse()
 
 	err := xlog.New(c)

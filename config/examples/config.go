@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	xconfig "github.com/alexferl/x/config"
-	xlog "github.com/alexferl/x/log"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -20,14 +18,14 @@ type Config struct {
 func NewConfig() *Config {
 	c := &Config{
 		Config: xconfig.New(),
-		MyKey: "value",
+		MyKey:  "value",
 	}
 	return c
 }
 
 // addFlags adds all the flags from the command line
 func (c *Config) addFlags(fs *pflag.FlagSet) {
-	fs.StringVar(&c.MyKey, "mykey", c.MyKey,"My key.")
+	fs.StringVar(&c.MyKey, "mykey", c.MyKey, "My key.")
 }
 
 // BindFlags normalizes and parses the command line flags
@@ -41,17 +39,4 @@ func main() {
 	c.BindFlags()
 	fmt.Println(viper.GetString("app-name")) // from xconfig, overloaded in configs/config.dev.toml
 	fmt.Println(viper.GetString("mykey"))
-
-	// Using with the log module
-	lc := &xlog.Config{
-		LogLevel:  viper.GetString("log-level"),
-		LogOutput: viper.GetString("log-output"),
-		LogWriter: viper.GetString("log-writer"),
-	}
-	err := xlog.New(lc)
-	if err != nil {
-		panic(fmt.Sprintf("Error initializing logger: '%v'", err))
-	}
-
-	log.Info().Msg("Hello, world!")
 }

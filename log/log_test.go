@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/rs/zerolog"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
@@ -27,13 +26,20 @@ func TestNew(t *testing.T) {
 		{&Config{LogLevel: "info", LogOutput: "stdout", LogWriter: "wrong"}, true},
 	}
 
-	for _, tt := range tests {
-		err := New(tt.config)
-		if !tt.fail {
-			assert.NoError(t, err)
-			assert.Equal(t, tt.config.LogLevel, zerolog.GlobalLevel().String())
+	for _, tc := range tests {
+		err := New(tc.config)
+		if !tc.fail {
+			if err != nil {
+				t.Errorf("%v", err)
+			}
+
+			if tc.config.LogLevel != zerolog.GlobalLevel().String() {
+				t.Errorf("got %s expected %s", tc.config.LogLevel, zerolog.GlobalLevel().String())
+			}
 		} else {
-			assert.Error(t, err)
+			if err == nil {
+				t.Error("test did not error")
+			}
 		}
 	}
 }

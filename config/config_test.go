@@ -2,16 +2,23 @@ package config
 
 import (
 	"testing"
-
-	xlog "github.com/alexferl/x/log"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
 	c := New()
 
-	assert.Equal(t, DefaultConfig.AppName, c.AppName)
-	assert.Equal(t, DefaultConfig.EnvName, c.EnvName)
-	assert.Equal(t, DefaultConfig.EnvVarPrefix, c.EnvVarPrefix)
-	assert.Equal(t, DefaultConfig.Logging, xlog.DefaultConfig)
+	var tests = []struct {
+		input    string
+		expected string
+	}{
+		{DefaultConfig.AppName, c.AppName},
+		{DefaultConfig.EnvName, c.EnvName},
+		{DefaultConfig.EnvVarPrefix, c.EnvVarPrefix},
+	}
+
+	for _, tc := range tests {
+		if tc.input != tc.expected {
+			t.Errorf("got %s expected %s", tc.input, tc.expected)
+		}
+	}
 }
