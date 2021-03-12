@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	xconfig "github.com/alexferl/x/config/v2"
 	"github.com/spf13/pflag"
@@ -31,7 +32,11 @@ func (c *Config) addFlags(fs *pflag.FlagSet) {
 // BindFlags normalizes and parses the command line flags
 func (c *Config) BindFlags() {
 	c.addFlags(pflag.CommandLine)
-	c.Config.BindFlags() // Bind the default flags from x/config
+	err := c.Config.BindFlags() // Bind the default flags from x/config
+	if err != nil {
+		fmt.Printf("%v\n", err)
+	}
+	os.Exit(1)
 }
 
 func main() {

@@ -1,10 +1,10 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -47,7 +47,7 @@ func wordSepNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
 }
 
 // BindFlags normalizes and parses the command line flags
-func (c *Config) BindFlags(flagSets ...func(fs *pflag.FlagSet)) {
+func (c *Config) BindFlags(flagSets ...func(fs *pflag.FlagSet)) error {
 	for _, flagSet := range flagSets {
 		flagSet(pflag.CommandLine)
 	}
@@ -55,7 +55,7 @@ func (c *Config) BindFlags(flagSets ...func(fs *pflag.FlagSet)) {
 	c.bindFlags(pflag.CommandLine)
 	err := viper.BindPFlags(pflag.CommandLine)
 	if err != nil {
-		log.Panic().Msgf("Error binding flags: '%v'", err)
+		return err
 	}
 
 	pflag.CommandLine.SetNormalizeFunc(wordSepNormalizeFunc)
@@ -63,7 +63,7 @@ func (c *Config) BindFlags(flagSets ...func(fs *pflag.FlagSet)) {
 
 	n := viper.GetString("app-name")
 	if len(n) < 1 {
-		log.Panic().Msgf("Application name cannot be empty!")
+		return errors.New("application name cannot be empty")
 	}
 
 	viper.SetEnvPrefix(n)
@@ -79,9 +79,11 @@ func (c *Config) BindFlags(flagSets ...func(fs *pflag.FlagSet)) {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Error().Msgf("Config file not found: '%v'", err)
+			return errors.New(fmt.Sprintf("config file not found: '%v'", err))
 		} else {
-			log.Panic().Msgf("Couldn't load config file: '%v'", err)
+			return errors.New(fmt.Sprintf("couldn't load config file: '%v'", err))
 		}
 	}
+
+	return nil
 }
